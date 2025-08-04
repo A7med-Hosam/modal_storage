@@ -386,7 +386,7 @@ if __name__  == '__main__':
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('greet', greet_command))
     app.add_handler(CommandHandler('status', status_command))
-    app.add_handler(CommandHandler('update', update_command))
+    app.add_handler(CommandHandler('update_notion', update_command))
     app.add_handler(CommandHandler('photo', message_photo))
 
     # Messages
