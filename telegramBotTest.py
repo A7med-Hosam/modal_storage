@@ -310,7 +310,7 @@ def change_sign(number):
         sign = "-"
     else:
         sign = ""
-    number_str = f'{sign} {abs(number)}$'
+    number_str = f'{sign} {abs(number)} $'
     return number_str
 # Commands /
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -321,7 +321,7 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     full_list = get_pnl_balance()
     full_list_formated = f"""
 ------------------------------
-    Balance = {full_list[0]}
+    Balance = {full_list[0]} $
 
     Today's Pnl 
         {change_sign(full_list[1])}
@@ -337,7 +337,7 @@ async def update_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     full_list = update_notion_dashboard()
     full_list_formated = f"""
 ------------------------------
-    Balance = {full_list[0]}
+    Balance = {full_list[0]} $
 
     Today's Pnl 
         {change_sign(full_list[1])}
