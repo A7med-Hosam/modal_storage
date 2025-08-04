@@ -15,7 +15,7 @@ script_dir = Path(__file__).parent
 TOKEN: Final = '8402834860:AAEscTZBvCGSC0G1s495m96DIlZDokW8Z9M'
 BOT_USERNAME: Final = '@notion_trading_dashboard_bot'
 
-def update_pnl_balance():
+def get_pnl_balance():
 
     NOTION_TOKEN = "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"
     PAGE_ID = "22267e6ab25480d0b2f2d2e0fe98b971"
@@ -307,7 +307,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('getting current bybit status ....')
-    full_list = update_notion_dashboard()
+    full_list = get_pnl_balance()
     full_list_formated = f"""
 ------------------------------
     Balance = {full_list[0]}
@@ -322,7 +322,7 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def update_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Updating Dashboard ....')
-    full_list = update_pnl_balance()
+    full_list = update_notion_dashboard()
     full_list_formated = f"""
 ------------------------------
     Balance = {full_list[0]}
