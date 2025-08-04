@@ -319,7 +319,7 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ------------------------------
 """
     print(full_list_formated)
-
+    await update.message.reply_text(f"{full_list_formated}")
 async def update_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Updating Dashboard ....')
     full_list = update_notion_dashboard()
