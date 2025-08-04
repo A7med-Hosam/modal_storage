@@ -334,7 +334,7 @@ async def update_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ------------------------------
 """
     print(full_list_formated)
-    await update.message.reply_text(f"Dashboard has been updated with code ✅ {full_list_formated}")
+    await update.message.reply_text(f"Dashboard has been updated successfully ✅ {full_list_formated}")
 
 async def greet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('greetings Ahmed I am your Notion Trading Dashboard')
