@@ -301,6 +301,17 @@ def update_notion_dashboard():
     full_list = [wallet_balance,total_pnl,live_pnl,todays_closed_pnl]
 
     return full_list
+
+def change_sign(number):
+    sign = ""
+    if number > 0:
+        sign = "+"
+    elif number < 0:
+        sign = "-"
+    else:
+        sign = ""
+    number_str = f'{sign} {abs(number)}$'
+    return number_str
 # Commands /
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Hello! this is Notion Trading Dashboard')
@@ -313,13 +324,14 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     Balance = {full_list[0]}
 
     Today's Pnl 
-        {full_list[1]}
+        {change_sign(full_list[1])}
   Live             Closed
-  {full_list[2]}                  {full_list[3]}
+  {change_sign(full_list[2])}                  {change_sign(full_list[3])}
 ------------------------------
 """
     print(full_list_formated)
     await update.message.reply_text(f"{full_list_formated}")
+
 async def update_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Updating Dashboard ....')
     full_list = update_notion_dashboard()
@@ -328,9 +340,9 @@ async def update_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     Balance = {full_list[0]}
 
     Today's Pnl 
-        {full_list[1]}
+        {change_sign(full_list[1])}
   Live             Closed
-  {full_list[2]}                  {full_list[3]}
+  {change_sign(full_list[2])}                  {change_sign(full_list[3])}
 ------------------------------
 """
     print(full_list_formated)
