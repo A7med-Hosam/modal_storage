@@ -9,14 +9,117 @@ import requests
 from pathlib import Path
 from pybit.unified_trading import HTTP
 from datetime import datetime, timedelta, timezone
+import time
+import asyncio
+from telethon import TelegramClient, events, sync
 
 script_dir = Path(__file__).parent
 
 TOKEN: Final = '8402834860:AAEscTZBvCGSC0G1s495m96DIlZDokW8Z9M'
 BOT_USERNAME: Final = '@notion_trading_dashboard_bot'
 
-def get_pnl_balance():
+api_id = 28658026
+api_hash = '54460e1ff82af4a70f596208a2bdd9a3'
 
+client = TelegramClient('session_name', api_id, api_hash)
+client.start()
+
+# print(client.get_me().stringify())
+
+CHAT_ID = -1002835451717
+ifttt_id = "@ifttt"
+dashboard_bot_id = "@notion_trading_dashboard_bot"
+
+
+def check_Volume(min_volume):
+    # min_volume = 2 * 1000 * 1000
+    min_turnover = 1 * 1000
+
+    from pybit.unified_trading import HTTP
+    from pprint import pprint
+    import json
+    from pathlib import Path
+    from datetime import datetime, timedelta
+
+    script_dir = Path(__file__).parent
+
+    session = HTTP(
+        testnet=False,
+        api_key="xqPk7N4KBd0cH3UHRl",
+        api_secret="Le8h8lf07ImeaDeLD3XsskM6PrgY9YHeJSVK",
+    )
+
+
+    def save_json(data,file_name):
+        script_dir = Path(__file__).parent
+        with open(f'{script_dir}/{file_name}.json', 'w', encoding='utf8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+    current_days_date_full= datetime.now()
+    current_timestamp= int(datetime.timestamp(current_days_date_full)*1000)
+
+    def get_start_timestamp(start_period): # start_period is how many minutes ago
+        date = (current_days_date_full - timedelta(1*start_period/(24*60)))
+        start_timestamp = int(datetime.timestamp(date)*1000)
+        return start_timestamp
+
+
+    def get_kline(interval,start_period):
+        coin_kline = session.get_kline(
+            category="linear",
+            symbol="MOODENGUSDT",
+            interval=interval,
+            start=get_start_timestamp(start_period),
+            end=current_timestamp,
+            )
+        return coin_kline
+
+    coin_kline_data = get_kline(5,10)
+
+    coin_kline_list = coin_kline_data["result"]["list"]
+    coin_turnover_volume_list = []
+
+    for list in coin_kline_list:
+        volume = int(list[5])
+        turnover = int(float(list[6]))
+        # print(f'volume= {volume} Turnover= {turnover}')
+        coin_turnover_volume_list.append([volume,turnover])
+
+    save_json(coin_kline_data,"coin_kline")
+    save_json(coin_turnover_volume_list,f'coin_turnover_volume_list')
+
+
+    def volume_turnover_sum():
+        volume_sum = 0
+        turnover_sum = 0
+        for list in coin_turnover_volume_list:
+            volume_sum+= list[0]
+            turnover_sum+= list[1]
+        return volume_sum,turnover_sum
+
+    volume_sum = volume_turnover_sum()[0]
+    turnover_sum = volume_turnover_sum()[1]
+
+    print(f'Volume sum = {volume_sum:,}')
+    print(f'Turnover sum = {turnover_sum:,}')
+    print("----------------------------")
+    alert = False
+    if volume_sum > min_volume:
+        print(f"alert triggerd, volume in the last 10m is higher than {min_volume}")
+        alert=True
+
+    return volume_sum,turnover_sum,alert
+
+async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
+    min_volume = 8 * 1000 * 1000
+    Volume_10_min = check_Volume(min_volume)[0]
+    if Volume_10_min > min_volume:
+        await client.send_message(ifttt_id, 'volume has reached 10 million')
+    await client.send_message(ifttt_id, f'volume in the last 10m is {Volume_10_min:,}')
+
+    await client.send_message(dashboard_bot_id, f"volume in the last 10m: {Volume_10_min}")
+
+def get_pnl_balance():
     NOTION_TOKEN = "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"
     PAGE_ID = "22267e6ab25480d0b2f2d2e0fe98b971"
     DATABASE_ID = "22267e6ab25480a0abd3d704c959d194"
@@ -312,9 +415,17 @@ def change_sign(number):
         sign = ""
     number_str = f'{sign} {abs(number)} $'
     return number_str
+
+# --------------------------------------------
+
+
+
 # Commands /
+    # print(f"Chat ID: {update.effective_chat.id}")
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Hello! this is Notion Trading Dashboard')
+    await client.send_message(ifttt_id, 'volume has reached 10 million')
+    # await update.message.reply_text('/ifttt volume')
+    # await context.bot.send_message(chat_id=CHAT_ID, text="/ifttt volume")
 
 async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('getting current bybit status ....')
@@ -367,7 +478,7 @@ def handle_response(text: str) -> str:
     if "how are you" in processed:
         return "I am good!"
     
-    return "I don't get that"
+    # return "I don't get that"
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_type: str = update.message.chat.type
@@ -393,19 +504,25 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__  == '__main__':
     print(" Starting bot...")
     app = Application.builder().token(TOKEN).build()
-
     # commands
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('greet', greet_command))
     app.add_handler(CommandHandler('status', status_command))
     app.add_handler(CommandHandler('update_notion', update_command))
     app.add_handler(CommandHandler('photo', message_photo))
+    # app.add_handler(CommandHandler('alert', message_photo))
 
     # Messages
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
 
     # errors
     app.add_error_handler(error)
+
+    # schedule jobs in a queue
+    job_queue = app.job_queue
+    job_queue2 = app.job_queue
+    job_minute = job_queue.run_repeating(callback_minute, interval=60, first=1)
+    # job_minute2 = job_queue2.run_repeating(, interval=30, first=1)
 
     # check new messages
     print('polling messages...')
