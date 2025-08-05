@@ -114,10 +114,9 @@ async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
     min_volume = 8 * 1000 * 1000
     Volume_10_min = check_Volume(min_volume)[0]
     if Volume_10_min > min_volume:
-        await client.send_message(ifttt_id, 'volume has reached 10 million')
-    await client.send_message(ifttt_id, f'volume in the last 10m is {Volume_10_min:,}')
+        await client.send_message(ifttt_id, f'volume in the last 10m is above: {Volume_10_min:,}')
+    await client.send_message(dashboard_bot_id, f"volume in the last 10m: {Volume_10_min:,}")
 
-    await client.send_message(dashboard_bot_id, f"volume in the last 10m: {Volume_10_min}")
 
 def get_pnl_balance():
     NOTION_TOKEN = "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"
