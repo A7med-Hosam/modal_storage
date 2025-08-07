@@ -31,7 +31,7 @@ ifttt_id = "@ifttt"
 dashboard_bot_id = "@notion_trading_dashboard_bot"
 
 
-def check_Volume(min_volume):
+def check_Volume(period,min_volume):
     # min_volume = 2 * 1000 * 1000
     min_turnover = 1 * 1000
 
@@ -74,7 +74,7 @@ def check_Volume(min_volume):
             )
         return coin_kline
 
-    coin_kline_data = get_kline(5,10)
+    coin_kline_data = get_kline(5,period)
 
     coin_kline_list = coin_kline_data["result"]["list"]
     coin_turnover_volume_list = []
@@ -105,17 +105,20 @@ def check_Volume(min_volume):
     print("----------------------------")
     alert = False
     if volume_sum > min_volume:
-        print(f"alert triggerd, volume in the last 10m is higher than {min_volume}")
+        print(f"alert triggerd, volume in the last 15m is higher than {min_volume}")
         alert=True
 
     return volume_sum,turnover_sum,alert
 
 async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
-    min_volume = 8 * 1000 * 1000
-    Volume_10_min = check_Volume(min_volume)[0]
-    if Volume_10_min > min_volume:
-        await client.send_message(ifttt_id, f'volume in the last 10m is above: {Volume_10_min:,}')
-    await client.send_message(dashboard_bot_id, f"volume in the last 10m: {Volume_10_min:,}")
+    min_volume = 12 * 1000 * 1000
+    period = 10
+    Volume_turnover_15_min = check_Volume(period,min_volume)
+    Volume_15_min = Volume_turnover_15_min[0]
+    Turnover_15_min = Volume_turnover_15_min[1]
+    if Volume_15_min > min_volume:
+        await client.send_message(ifttt_id, f'volume in the last {period}m is above: {Volume_15_min:,} Turnover: ({Turnover_15_min:,}) ')
+    await client.send_message(dashboard_bot_id, f"{period}m volume: ( {Volume_15_min:,} ) Turnover: ({Turnover_15_min:,})")
 
 
 def get_pnl_balance():
@@ -520,11 +523,11 @@ if __name__  == '__main__':
     # schedule jobs in a queue
     job_queue = app.job_queue
     job_queue2 = app.job_queue
-    job_minute = job_queue.run_repeating(callback_minute, interval=60, first=1)
+    job_minute = job_queue.run_repeating(callback_minute, interval=120, first=1)
     # job_minute2 = job_queue2.run_repeating(, interval=30, first=1)
 
     # check new messages
-    print('polling messages...')
+    print('polling messages ...')
     app.run_polling(poll_interval=3)
 
     
