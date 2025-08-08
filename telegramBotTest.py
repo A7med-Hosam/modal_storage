@@ -17,6 +17,8 @@ script_dir = Path(__file__).parent
 
 TOKEN: Final = '8402834860:AAEscTZBvCGSC0G1s495m96DIlZDokW8Z9M'
 BOT_USERNAME: Final = '@notion_trading_dashboard_bot'
+BYBIT_API_KEY: Final = "X2IkVTBrSGigrygWl6"
+BYBIT_API_SECRET: Final = "Pt1TfrpaxJ6C1Qw8dwMPf77NbAqCJlAkFWWe"
 
 api_id = 28658026
 api_hash = '54460e1ff82af4a70f596208a2bdd9a3'
@@ -31,9 +33,9 @@ ifttt_id = "@ifttt"
 dashboard_bot_id = "@notion_trading_dashboard_bot"
 
 
-def check_Volume(period,min_volume):
-    # min_volume = 2 * 1000 * 1000
-    min_turnover = 1 * 1000
+def get_volume(period,min_10m_volume,interval):
+    # min_10m_volume = 2 * 1000 * 1000
+    # min_turnover = 1 * 1000
 
     from pybit.unified_trading import HTTP
     from pprint import pprint
@@ -45,8 +47,8 @@ def check_Volume(period,min_volume):
 
     session = HTTP(
         testnet=False,
-        api_key="xqPk7N4KBd0cH3UHRl",
-        api_secret="Le8h8lf07ImeaDeLD3XsskM6PrgY9YHeJSVK",
+        api_key=BYBIT_API_KEY,
+        api_secret=BYBIT_API_SECRET,
     )
 
 
@@ -74,7 +76,7 @@ def check_Volume(period,min_volume):
             )
         return coin_kline
 
-    coin_kline_data = get_kline(5,period)
+    coin_kline_data = get_kline(interval,period)
 
     coin_kline_list = coin_kline_data["result"]["list"]
     coin_turnover_volume_list = []
@@ -104,21 +106,30 @@ def check_Volume(period,min_volume):
     print(f'Turnover sum = {turnover_sum:,}')
     print("----------------------------")
     alert = False
-    if volume_sum > min_volume:
-        print(f"alert triggerd, volume in the last 15m is higher than {min_volume}")
+    if volume_sum > min_10m_volume:
+        print(f"alert triggerd, volume in the last 15m is higher than {min_10m_volume}")
         alert=True
 
     return volume_sum,turnover_sum,alert
 
+def check_volume(min_volume,period,interval):
+    Volume_turnover = get_volume(period,min_volume,interval)
+    volume = Volume_turnover[0]
+    turnover = Volume_turnover[2]
+    if volume > min_volume:
+        client.send_message(ifttt_id, f'in {period/interval} consecutive {period}m volume: {volume:,} Turnover: ({turnover:,}) ')
+    return
+
 async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
-    min_volume = 12 * 1000 * 1000
+    min_10m_volume = 10 * 1000 * 1000
     period = 10
-    Volume_turnover_15_min = check_Volume(period,min_volume)
-    Volume_15_min = Volume_turnover_15_min[0]
-    Turnover_15_min = Volume_turnover_15_min[1]
-    if Volume_15_min > min_volume:
-        await client.send_message(ifttt_id, f'volume in the last {period}m is above: {Volume_15_min:,} Turnover: ({Turnover_15_min:,}) ')
-    await client.send_message(dashboard_bot_id, f"{period}m volume: ( {Volume_15_min:,} ) Turnover: ({Turnover_15_min:,})")
+    interval = 5
+    Volume_turnover_10_min = get_volume(period,min_10m_volume,interval)
+    Volume_10_min = Volume_turnover_10_min[0]
+    Turnover_10_min = Volume_turnover_10_min[1]
+    if Volume_10_min > min_10m_volume:
+        await client.send_message(ifttt_id, f'volume in the last {period}m is above: {Volume_10_min:,} Turnover: ({Turnover_10_min:,}) ')
+    await client.send_message(dashboard_bot_id, f"{period}m volume: ( {Volume_10_min:,} ) Turnover: ({Turnover_10_min:,})")
 
 
 def get_pnl_balance():
@@ -138,8 +149,8 @@ def get_pnl_balance():
 
     session = HTTP(
         testnet=False,
-        api_key="xqPk7N4KBd0cH3UHRl",
-        api_secret="Le8h8lf07ImeaDeLD3XsskM6PrgY9YHeJSVK",
+        api_key=BYBIT_API_KEY,
+        api_secret=BYBIT_API_SECRET,
     )
 
 
@@ -282,8 +293,8 @@ def update_notion_dashboard():
 
     session = HTTP(
         testnet=False,
-        api_key="xqPk7N4KBd0cH3UHRl",
-        api_secret="Le8h8lf07ImeaDeLD3XsskM6PrgY9YHeJSVK",
+        api_key=BYBIT_API_KEY,
+        api_secret=BYBIT_API_SECRET,
     )
 
 
