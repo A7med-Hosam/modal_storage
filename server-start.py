@@ -1,9 +1,9 @@
 from telegram.ext import ContextTypes, Application
 
-TOKEN = '8402834860:AAEscTZBvCGSC0G1s495m96DIlZDokW8Z9M' 
+TOKEN = '8402834860:AAFlpWErSZwabKcg3BrC5HXRj7usJhn-v4o' 
 
 async def callback_30(context: ContextTypes.DEFAULT_TYPE):
-  await context.bot.send_message(chat_id=5102936741, text='server started ......')
+    await context.bot.send_message(chat_id=5102936741, text='SERVER STARTED AND RUNNING ...')
 
 application = Application.builder().token(TOKEN).build()
 
