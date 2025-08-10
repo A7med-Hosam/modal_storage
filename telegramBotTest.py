@@ -15,7 +15,7 @@ from telethon import TelegramClient, events, sync
 
 script_dir = Path(__file__).parent
 
-TOKEN: Final = '8402834860:AAEscTZBvCGSC0G1s495m96DIlZDokW8Z9M'
+TOKEN: Final = '8402834860:AAFlpWErSZwabKcg3BrC5HXRj7usJhn-v4o'
 BOT_USERNAME: Final = '@notion_trading_dashboard_bot'
 BYBIT_API_KEY: Final = "X2IkVTBrSGigrygWl6"
 BYBIT_API_SECRET: Final = "Pt1TfrpaxJ6C1Qw8dwMPf77NbAqCJlAkFWWe"
