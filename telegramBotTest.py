@@ -33,7 +33,7 @@ ifttt_id = "@ifttt"
 dashboard_bot_id = "@notion_trading_dashboard_bot"
 
 
-def get_volume(period,min_10m_volume,interval):
+def get_volume(period,min_10m_volume,interval,coin_name):
     # min_10m_volume = 2 * 1000 * 1000
     # min_turnover = 1 * 1000
 
@@ -66,17 +66,17 @@ def get_volume(period,min_10m_volume,interval):
         return start_timestamp
 
 
-    def get_kline(interval,start_period):
+    def get_kline(interval,start_period,coin_name: str):
         coin_kline = session.get_kline(
             category="linear",
-            symbol="MOODENGUSDT",
+            symbol=coin_name,
             interval=interval,
             start=get_start_timestamp(start_period),
             end=current_timestamp,
             )
         return coin_kline
 
-    coin_kline_data = get_kline(interval,period)
+    coin_kline_data = get_kline(interval,period,coin_name)
 
     coin_kline_list = coin_kline_data["result"]["list"]
     coin_turnover_volume_list = []
@@ -112,24 +112,41 @@ def get_volume(period,min_10m_volume,interval):
 
     return volume_sum,turnover_sum,alert
 
-def check_volume(min_volume,period,interval):
-    Volume_turnover = get_volume(period,min_volume,interval)
+def check_volume(min_volume,period,interval,coin_name):
+    Volume_turnover = get_volume(period,min_volume,interval,coin_name)
     volume = Volume_turnover[0]
     turnover = Volume_turnover[2]
     if volume > min_volume:
         client.send_message(ifttt_id, f'in {period/interval} consecutive {period}m volume: {volume:,} Turnover: ({turnover:,}) ')
     return
 
-async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
+def check_alert(min_volume,period,interval):
     min_10m_volume = 10 * 1000 * 1000
     period = 10
     interval = 5
-    Volume_turnover_10_min = get_volume(period,min_10m_volume,interval)
+    Volume_turnover_10_min = get_volume(period,min_10m_volume,interval,)
     Volume_10_min = Volume_turnover_10_min[0]
     Turnover_10_min = Volume_turnover_10_min[1]
-    if Volume_10_min > min_10m_volume:
-        await client.send_message(ifttt_id, f'volume in the last {period}m is above: {Volume_10_min:,} Turnover: ({Turnover_10_min:,}) ')
-    await client.send_message(dashboard_bot_id, f"{period}m volume: ( {Volume_10_min:,} ) Turnover: ({Turnover_10_min:,})")
+
+
+async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
+    async def check_coin_volume(min_volume,period,interval,coin_name):
+            min_volume = min_volume * 1000 * 1000
+            Volume_turnover_10_min = get_volume(period,min_volume,interval,coin_name)
+            volume_in_period = Volume_turnover_10_min[0]
+            turnover_in_period = Volume_turnover_10_min[1]
+            check_result = f"{coin_name} {period}m volume: ( {volume_in_period:,} ) Turnover: ({turnover_in_period:,})\n"
+            # await client.send_message(dashboard_bot_id, f"{coin_name} {period}m volume: ( {volume_in_period:,} ) Turnover: ({turnover_in_period:,})")
+            if volume_in_period > min_volume:
+                await client.send_message(ifttt_id, f'{coin_name} volume in the last {period}m is above: {volume_in_period:,} Turnover: ({turnover_in_period:,}) ')
+            return check_result
+    
+    MOODENGUSDT_VOLUME = await check_coin_volume(12,10,5,"MOODENGUSDT")
+    BIOUSDT_VOLUME = await check_coin_volume(8,5,5,"BIOUSDT")
+
+    message_text = f"{MOODENGUSDT_VOLUME}{BIOUSDT_VOLUME}"
+    await client.send_message(dashboard_bot_id, message_text)
+
 
 
 def get_pnl_balance():
