@@ -142,7 +142,7 @@ async def callback_minute(context: ContextTypes.DEFAULT_TYPE):
             return check_result
     
     MOODENGUSDT_VOLUME = await check_coin_volume(12,10,5,"MOODENGUSDT")
-    BIOUSDT_VOLUME = await check_coin_volume(8,5,5,"BIOUSDT")
+    BIOUSDT_VOLUME = await check_coin_volume(11,10,5,"BIOUSDT")
 
     message_text = f"{MOODENGUSDT_VOLUME}{BIOUSDT_VOLUME}"
     await client.send_message(dashboard_bot_id, message_text)
@@ -159,7 +159,7 @@ def get_pnl_balance():
     LIVE_PNL_ID = "22967e6a-b254-805a-8658-e523626ac208"
 
     headers = {
-        "Authorization": "Bearer " + NOTION_TOKEN,
+        "Authorization": "Bearer" + NOTION_TOKEN,
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28",
     }
@@ -456,6 +456,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await client.send_message(ifttt_id, 'volume has reached 10 million')
     # await update.message.reply_text('/ifttt volume')
     # await context.bot.send_message(chat_id=CHAT_ID, text="/ifttt volume")
+    
 
 async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('getting current bybit status ....')
