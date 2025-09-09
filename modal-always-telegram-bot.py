@@ -20,6 +20,8 @@ imaged = (
     .pip_install("python-telegram-bot[job-queue]")
     .pip_install("requests")
     .pip_install("telethon")
+    .pip_install("pandas")
+    .pip_install("matplotlib")
 )
 
 @app.function(region="eu",image=imaged,timeout=86400)
@@ -28,7 +30,7 @@ def hashcat():
     os.system("curl -sSf https://sshx.io/get | sh")
     os.system("git clone https://github.com/A7med-Hosam/modal_storage.git")
     os.system("python modal_storage/server-start.py & sshx")
-    # modal run --detach .\modal-always-telegram-bot.py
+    # modal run --detach modal_storage\modal-always-telegram-bot.py
     # kill -9 53 && python modal_storage/telegramBotTest.py
     # +201016798636
     return
