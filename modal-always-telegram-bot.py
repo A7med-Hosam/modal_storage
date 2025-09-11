@@ -22,6 +22,8 @@ imaged = (
     .pip_install("telethon")
     .pip_install("pandas")
     .pip_install("matplotlib")
+    .pip_install("mpl_finance")
+    # .pip_install("mplfinance")
 )
 
 @app.function(region="eu",image=imaged,timeout=86400)
