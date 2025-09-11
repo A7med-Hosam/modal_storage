@@ -29,8 +29,8 @@ def save_json(data,file_name):
 
 session = HTTP(testnet=False)
 
-def get_live_candles(coin_name,duration,interval):
-    todays_timestamp= int(datetime.timestamp(datetime.now())*1000)
+def get_live_candles(coin_name,duration,interval,days_ago=0):
+    todays_timestamp= int(datetime.timestamp(datetime.now()-timedelta(days_ago))*1000)+6000*15
     # specific_date = datetime(2020, 2, 13)
     # earliest data I could get today 8/9/2025 is from 2020,2,13 (1581552000000) for 60m interval 
     # earliest data I could get today 8/9/2025 is from 2020,3,25 (1585094400000) for 1m interval
@@ -39,7 +39,7 @@ def get_live_candles(coin_name,duration,interval):
     # hour = 
     day= 8
     month= 9
-    year= 2025
+    year= 2024
 
     specific_timestamp = int(datetime.timestamp(datetime(year, month, day))*1000)
 
@@ -53,8 +53,8 @@ def get_live_candles(coin_name,duration,interval):
 
     coin = coin_name
 
-    duration = duration * 10
-    live_timestamp = todays_timestamp - (6000 * 1 * 1440 * duration)
+    duration = duration * 1
+    live_timestamp = todays_timestamp - (6000 * 10 * 1440 * duration)
     start_timestamp = live_timestamp
 
     interval = interval
@@ -64,7 +64,7 @@ def get_live_candles(coin_name,duration,interval):
 
 
     all_candles = []
-    total_candles = int(duration * 24 * (60/interval))
+    total_candles = int(duration * 1 * 24 * (60/interval))
     candle_num = 0
 
     add_timestamp = interval * 60000 * 1000
@@ -79,15 +79,16 @@ def get_live_candles(coin_name,duration,interval):
             start=start_timestamp,
             # end=end_timestamp,
         )['result']['list']
+        raw_candles_data = list(reversed(raw_candles_data))
         # save_json(raw_candles_data,"temp_list")
         start_timestamp += add_timestamp 
-        if len(raw_candles_data) == 0:
+        if len(raw_candles_data) == 0 or len(raw_candles_data) == 7:
             print("there is no more data")
             break
         for candle in raw_candles_data:
-            all_candles.append(candle)
             candle_num+=1
-            if candle_num > total_candles:
+            all_candles.append(candle)
+            if candle_num >= total_candles+1:
                 # print("rumber reached")
                 break
         # sleep(5)
@@ -134,6 +135,8 @@ def get_live_candles(coin_name,duration,interval):
     candles_dataframe.to_csv(f'{script_dir}/{coin}_{interval}m_Live.csv', index=False)
     print(f"data saved to {coin}_{interval}m_{duration}d_{num_days}D.csv")
 
+# get_live_candles("BTCUSDT",.25,1)
+
 # while True:
-#     get_live_candles("MOODENGUSDT",0.25,1)
+#     get_live_candles("MOODENGUSDT",5.25,1)
 #     sleep(1)
