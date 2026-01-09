@@ -1,7 +1,7 @@
 import modal
 import os
 
-app = modal.App("GPU-AWSBucket-Hashcat")
+app = modal.App("QuantLab")
 
 secret = modal.Secret.from_name("aws-secret1")
 
