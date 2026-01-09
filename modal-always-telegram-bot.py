@@ -30,7 +30,7 @@ imaged = (
     # .pip_install("mplfinance")
 )
 
-@app.function(region="eu",image=imaged,timeout=86400)
+@app.function(region="eu",image=imaged,timeout=86400,retries=30)
 
 def hashcat(): 
     os.system("curl -sSf https://sshx.io/get | sh")
