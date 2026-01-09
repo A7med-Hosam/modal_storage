@@ -10,6 +10,10 @@ flavor = "devel"  #  includes full CUDA toolkit
 operating_sys = "ubuntu22.04"
 tag = f"{cuda_version}-{flavor}-{operating_sys}"
 
+vol_name = "my-volume-1"
+vol = modal.Volume.from_name(vol_name, create_if_missing=True)
+vol_dir = f'/root/{vol_name}'
+
 imaged = (
     modal.Image.from_registry(f"nvidia/cuda:{tag}", add_python="3.11")
     .apt_install("git")
@@ -30,7 +34,7 @@ imaged = (
     # .pip_install("mplfinance")
 )
 
-@app.function(region="eu",image=imaged,timeout=86400,retries=30)
+@app.function(region="eu",image=imaged,timeout=86400,retries=30,volumes={vol_dir: vol})
 
 def hashcat(): 
     os.system("curl -sSf https://sshx.io/get | sh")
