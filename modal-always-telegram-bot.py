@@ -23,6 +23,10 @@ imaged = (
     .pip_install("pandas")
     .pip_install("matplotlib")
     .pip_install("mpl_finance")
+    .pip_install("torch")
+    .pip_install("numpy")
+    .pip_install("seaborn")
+    
     # .pip_install("mplfinance")
 )
 
