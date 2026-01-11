@@ -40,7 +40,7 @@ def hashcat():
     os.system("curl -sSf https://sshx.io/get | sh")
     os.system("curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64' --output vscode_cli.tar.gz && tar -xf vscode_cli.tar.gz")
     os.system("git clone https://github.com/A7med-Hosam/modal_storage.git")
-    os.system("python modal_storage/server-start.py & sshx")
+    os.system("python modal_storage/server-start.py && sshx")
     # modal run --detach modal_storage\modal-always-telegram-bot.py
     # kill -9 53 && python modal_storage/telegramBotTest.py
     # +201016798636
