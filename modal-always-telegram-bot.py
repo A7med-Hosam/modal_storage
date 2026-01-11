@@ -1,5 +1,6 @@
 import modal
 import os
+from typing import Optional
 
 app = modal.App("QuantLab")
 
@@ -34,7 +35,7 @@ imaged = (
     # .pip_install("mplfinance")
 )
 
-@app.function(region="eu",image=imaged,startup_timeout=84600,timeout=23,retries=10,volumes={vol_dir: vol})
+@app.function(region="eu",image=imaged,timeout=84600,retries=10,volumes={vol_dir: vol})
 def quant_lab(): 
     print("Quant Lab is Live")
     os.system("curl -sSf https://sshx.io/get | sh")
@@ -46,4 +47,11 @@ def quant_lab():
     # +201016798636
     return
 
+@app.local_entrypoint()
+def main(experiment: Optional[str] = None):
+    if experiment is None:
+        from uuid import uuid4
+        experiment = uuid4().hex[:8]
 
+    print(f"⚡️ starting interruptible Quant Lab No. {experiment}")
+    quant_lab.spawn().get()
