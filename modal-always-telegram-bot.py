@@ -47,7 +47,4 @@ def hashcat():
     return
 
 
-@app.local_entrypoint()
-def main():
-    hashcat.remote()
-    print("Finished Running Your Code On The Cloud 🙂")
+
