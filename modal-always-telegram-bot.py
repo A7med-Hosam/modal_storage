@@ -34,7 +34,7 @@ imaged = (
     # .pip_install("mplfinance")
 )
 
-@app.function(region="eu",image=imaged,timeout=86400,retries=9,volumes={vol_dir: vol})
+@app.function(region="eu",image=imaged,timeout=84600,retries=10,volumes={vol_dir: vol})
 def hashcat(): 
     os.system("curl -sSf https://sshx.io/get | sh")
     os.system("curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64' --output vscode_cli.tar.gz && tar -xf vscode_cli.tar.gz")
