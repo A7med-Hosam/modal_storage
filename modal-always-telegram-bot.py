@@ -35,7 +35,7 @@ imaged = (
     # .pip_install("mplfinance")
 )
 
-@app.function(region="eu",image=imaged,timeout=84600,retries=10,volumes={vol_dir: vol})
+@app.function(region="eu",image=imaged,timeout=85600,retries=10,max_containers=1,volumes={vol_dir: vol})
 def quant_lab(): 
     print("Quant Lab is Live")
     os.system("curl -sSf https://sshx.io/get | sh")
