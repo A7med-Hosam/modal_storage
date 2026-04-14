@@ -145,7 +145,7 @@ class QuantLab:
                 # os.system("autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -o 'ExitOnForwardFailure=yes' -i /root/my-volume-1/serveo_key -R quant-dashboard:80:localhost:5000 serveo.net &")
                 os.system("cd /root/my-volume-1/working/kucoin_bot/dashboard && python app.py &")
                 os.system("cd /root/my-volume-1/working/kucoin_bot/dashboard && python update_dashboard.py &")
-                os.system("cd /root/my-volume-1/working/kucoin_bot/ && python backup_and_send.py &")
+                os.system("cd /root/my-volume-1/working/kucoin_bot/dependencies && python backup_and_send.py &")
                 
 
                 # os.system("zrok share public --share-token quant-chart &")
@@ -155,9 +155,9 @@ class QuantLab:
                 os.system("curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64' --output vscode_cli.tar.gz && tar -xf vscode_cli.tar.gz")
                 os.system("git clone https://github.com/A7med-Hosam/modal_storage.git")
                 # os.system("python modal_storage/server-start.py")
-                os.system('python3 modal_storage/telegram_message.py "Quant Lab is Live"')
-
+                os.system('python /root/my-volume-1/working/kucoin_bot/dependencies "Quant Lab is Live"')
                 print("Quant Lab is Live")
+
                 # ? ./code tunnel
 
                 # Start SSH daemon in background
@@ -179,17 +179,18 @@ class QuantLab:
                 os.system("if [ ! -f /root/my-volume-1/serveo_key_4 ]; then ssh-keygen -t rsa -b 2048 -f /root/my-volume-1/serveo_key_4 -q -N ''; fi")
                 time.sleep(4)
                 os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key -R {DASHBOARD_SERVEO_ALIAS}:80:localhost:5000 serveo.net &")
-                os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_2 -R {FILES_BROWSER_SERVEO_ALIAS}:80:localhost:8070 serveo.net &")
+                # os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_2 -R {FILES_BROWSER_SERVEO_ALIAS}:80:localhost:8070 serveo.net &")
                 os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_3 -R {N9ROUTER_ALIAS}:80:localhost:20128 serveo.net &")
                 os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_4 -R {SSHX_SERVEO_ALIAS}:80:localhost:7681 serveo.net &")
                 # autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_3 -R 9router:80:localhost:20128 serveo.net
+                # autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_2 -R jupyter-quantlab:80:localhost:11223 serveo.net
                 # os.system(f"lt --port {jupyter_port} --subdomain jupyter-quantlab &")
                 # os.system("lt --port 5000 --subdomain dashboard-quantlab &")
 
                 # Open both tunnels concurrently (SSH as fallback + Jupyter)
                 with modal.forward(port=22, unencrypted=True) as ssh_tunnel, \
                     modal.forward(port=jupyter_port, unencrypted=True) as jupyter_tunnel:
-
+                    time.sleep(2)
                     os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_2 -R {JUPYTER_SERVEO_ALIAS}:80:localhost:{jupyter_port} serveo.net &")
                     os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -o 'ExitOnForwardFailure=yes' -R {SERVEO_ALIAS}:22:localhost:22 serveo.net &")
                     # ngrok_tunnel = run_jupyter_server(ngrok_port)
@@ -216,6 +217,8 @@ class QuantLab:
                         )
 
 
+                    time.sleep(2)
+
                     # Keep both services running for the duration of the container's life
                     try:
                         end_time = time.time() + timeout_period
@@ -232,9 +235,9 @@ class QuantLab:
                         
                         while True:
                             try:
-                                os.system("python /root/my-volume-1/working/kucoin_bot/trades_manager.py")
+                                os.system("python /root/my-volume-1/working/kucoin_bot/bots_manager.py")
                             except Exception as e:
-                                print(f"Error in trades_manager.py: {e}")
+                                print(f"Error in bots_manager.py: {e}")
                             time.sleep(5)
                             break
                         while time.time() < end_time:
