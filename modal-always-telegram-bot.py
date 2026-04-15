@@ -93,7 +93,7 @@ CHART_NGROK_AUTHTOKEN = "39nLfkTWMdtB4ODiRCiL511EDqe_7XeaLxcw6CMxxDZjXc3Ah"
 
 
 # ["eu","uk","ap"]
-@app.cls(region="eu", image=imaged,timeout=timeout_period,retries=10,max_containers=1,volumes={vol_dir: vol},cpu=0.25,memory=1336)
+@app.cls(region="eu", image=imaged,timeout=timeout_period,retries=10,max_containers=1,volumes={vol_dir: vol},cpu=0.25,memory=1536)
 class QuantLab:
     @modal.exit()
     def on_exit(self):
