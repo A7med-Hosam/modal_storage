@@ -177,6 +177,7 @@ class QuantLab:
                 os.system("if [ ! -f /root/my-volume-1/serveo_key_2 ]; then ssh-keygen -t rsa -b 2048 -f /root/my-volume-1/serveo_key_2 -q -N ''; fi")
                 os.system("if [ ! -f /root/my-volume-1/serveo_key_3 ]; then ssh-keygen -t rsa -b 2048 -f /root/my-volume-1/serveo_key_3 -q -N ''; fi")
                 os.system("if [ ! -f /root/my-volume-1/serveo_key_4 ]; then ssh-keygen -t rsa -b 2048 -f /root/my-volume-1/serveo_key_4 -q -N ''; fi")
+                os.system("if [ ! -f /root/my-volume-1/serveo_key_5 ]; then ssh-keygen -t rsa -b 2048 -f /root/my-volume-1/serveo_key_5 -q -N ''; fi")
                 time.sleep(4)
                 os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key -R {DASHBOARD_SERVEO_ALIAS}:80:localhost:5000 serveo.net &")
                 # os.system(f"autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_2 -R {FILES_BROWSER_SERVEO_ALIAS}:80:localhost:8070 serveo.net &")
