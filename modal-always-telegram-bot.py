@@ -93,7 +93,7 @@ CHART_NGROK_AUTHTOKEN = "39nLfkTWMdtB4ODiRCiL511EDqe_7XeaLxcw6CMxxDZjXc3Ah"
 
 
 # ["eu","uk","ap"]
-@app.cls(region="eu", image=imaged,timeout=timeout_period,retries=10,max_containers=1,volumes={vol_dir: vol},cpu=0.25,memory=1536)
+@app.cls(region="eu", image=imaged,timeout=timeout_period,retries=10,max_containers=1,volumes={vol_dir: vol,vol_dir_2: vol_2},cpu=0.20,memory=1036)
 class QuantLab:
     @modal.exit()
     def on_exit(self):
@@ -187,6 +187,7 @@ class QuantLab:
                 # autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i /root/my-volume-1/serveo_key_2 -R jupyter-quantlab:80:localhost:11223 serveo.net
                 # os.system(f"lt --port {jupyter_port} --subdomain jupyter-quantlab &")
                 # os.system("lt --port 5000 --subdomain dashboard-quantlab &")
+                # autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -i serveo_key_1 -R 9remote:80:localhost:2208 serveo.net
 
                 # Open both tunnels concurrently (SSH as fallback + Jupyter)
                 with modal.forward(port=22, unencrypted=True) as ssh_tunnel, \
