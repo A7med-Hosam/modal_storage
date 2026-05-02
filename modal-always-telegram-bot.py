@@ -145,7 +145,7 @@ class QuantLab:
                 # os.system("autossh -M 0 -o 'StrictHostKeyChecking=no' -o 'ServerAliveInterval=30' -o 'ExitOnForwardFailure=yes' -i /root/my-volume-1/serveo_key -R quant-dashboard:80:localhost:5000 serveo.net &")
                 os.system("cd /root/my-volume-1/working/kucoin_bot/dashboard && python app.py &")
                 os.system("cd /root/my-volume-1/working/kucoin_bot/dashboard && python update_dashboard.py &")
-                os.system("cd /root/my-volume-1/working/kucoin_bot/dependencies && python backup_and_send.py &")
+                # os.system("cd /root/my-volume-1/working/kucoin_bot/dependencies && python backup_and_send.py &")
                 
 
                 # os.system("zrok share public --share-token quant-chart &")
@@ -237,7 +237,8 @@ class QuantLab:
                         
                         while True:
                             try:
-                                os.system("python /root/my-volume-1/working/kucoin_bot/bots_manager.py")
+                                # os.system("python /root/my-volume-1/working/kucoin_bot/bots_manager.py")
+                                print('skip bot')
                             except Exception as e:
                                 print(f"Error in bots_manager.py: {e}")
                             time.sleep(5)
