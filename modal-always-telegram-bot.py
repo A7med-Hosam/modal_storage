@@ -108,7 +108,7 @@ class QuantLab:
         while True:
             # os.system("rsync -av /root/my-volume-1/root /root")
             # os.system("cp -r /root/my-volume-1/root /root/")
-            os.system("python3 /root/my-volume-1/working/kucoin_bot/sync_home.py")
+            os.system("python3 /root/my-volume-1/working/kucoin_bot/helper_scripts/sync_home.py")
             # os.system("bash /root/my-volume-1/root/mutgen.sh")
             try:
                 ngrok_port = "11223"
